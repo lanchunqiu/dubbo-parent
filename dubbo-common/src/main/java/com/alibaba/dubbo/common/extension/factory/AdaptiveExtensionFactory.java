@@ -39,6 +39,7 @@ public class AdaptiveExtensionFactory implements ExtensionFactory {
         for (String name : loader.getSupportedExtensions()) {
             list.add(loader.getExtension(name));
         }
+        //[lancq]factories=[spi=com.alibaba.dubbo.common.extension.factory.SpiExtensionFactory,spring=com.alibaba.dubbo.config.spring.extension.SpringExtensionFactory]
         factories = Collections.unmodifiableList(list);
     }
 

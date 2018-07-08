@@ -341,8 +341,8 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void doExportUrls() {
-        List<URL> registryURLs = loadRegistries(true);
-        for (ProtocolConfig protocolConfig : protocols) {
+        List<URL> registryURLs = loadRegistries(true);//[lancq]加载注册中心url
+        for (ProtocolConfig protocolConfig : protocols) {//[lancq]是不是支持多协议
             doExportUrlsFor1Protocol(protocolConfig, registryURLs);
         }
     }

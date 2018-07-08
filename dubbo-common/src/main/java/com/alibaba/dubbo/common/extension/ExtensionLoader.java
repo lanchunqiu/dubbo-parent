@@ -502,6 +502,7 @@ public class ExtensionLoader<T> {
                 instance = (T) EXTENSION_INSTANCES.get(clazz);
             }
             injectExtension(instance);
+            //[lancq]wrapperClasses =>[ProtocolListenerWrapper,ProtocolFilterWrapper]
             Set<Class<?>> wrapperClasses = cachedWrapperClasses;
             if (wrapperClasses != null && wrapperClasses.size() > 0) {
                 for (Class<?> wrapperClass : wrapperClasses) {
@@ -514,7 +515,8 @@ public class ExtensionLoader<T> {
                     type + ")  could not be instantiated: " + t.getMessage(), t);
         }
     }
-
+    //[lancq]对于类中有setXXX(Protocol protocol)方法时，调用此方法加载扩展点，即依赖注入
+    //instance => AdaptiveCompiler
     private T injectExtension(T instance) {
         try {
             if (objectFactory != null) {
@@ -525,6 +527,7 @@ public class ExtensionLoader<T> {
                         Class<?> pt = method.getParameterTypes()[0];
                         try {
                             String property = method.getName().length() > 3 ? method.getName().substring(3, 4).toLowerCase() + method.getName().substring(4) : "";
+                            //[lancq]objectFactory => AdaptiveExtensionFactory
                             Object object = objectFactory.getExtension(pt, property);
                             if (object != null) {
                                 method.invoke(instance, object);
