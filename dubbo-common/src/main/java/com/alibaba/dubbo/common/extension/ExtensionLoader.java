@@ -103,6 +103,7 @@ public class ExtensionLoader<T> {
         return type.isAnnotationPresent(SPI.class);
     }
 
+    //初始化一个ExtensionLoader
     @SuppressWarnings("unchecked")
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
         if (type == null)
@@ -439,9 +440,12 @@ public class ExtensionLoader<T> {
         }
     }
 
+    //[lancq]获得一个自适应扩展点
     @SuppressWarnings("unchecked")
     public T getAdaptiveExtension() {
         Object instance = cachedAdaptiveInstance.get();
+
+        //[lancq]DCL双重校验锁，获取单例
         if (instance == null) {
             if (createAdaptiveInstanceError == null) {
                 synchronized (cachedAdaptiveInstance) {
@@ -734,7 +738,7 @@ public class ExtensionLoader<T> {
             throw new IllegalStateException("Can not create adaptive extenstion " + type + ", cause: " + e.getMessage(), e);
         }
     }
-
+    //[lancq]获取适配器扩展点
     private Class<?> getAdaptiveExtensionClass() {
         getExtensionClasses();//[lancq]加载扩展点的实现类
         if (cachedAdaptiveClass != null) {
@@ -742,14 +746,14 @@ public class ExtensionLoader<T> {
         }
         return cachedAdaptiveClass = createAdaptiveExtensionClass();
     }
-    //[lancq]创建一个适配器扩展点(创建一个动态字节码文件)
+    //[lancq]创建一个适配器扩展点（创建一个动态字节码文件）
     private Class<?> createAdaptiveExtensionClass() {
-        //生成字节码代码
+        //[lancq]生成字节码代码
         String code = createAdaptiveExtensionClassCode();
-        //获得类加载器
+        //[lancq]获得类加载器
         ClassLoader classLoader = findClassLoader();
         com.alibaba.dubbo.common.compiler.Compiler compiler = ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.common.compiler.Compiler.class).getAdaptiveExtension();
-        //动态编译
+        //[lancq]动态编译
         return compiler.compile(code, classLoader);
     }
     //[lancq]生产了一个Protocol$Adaptive
